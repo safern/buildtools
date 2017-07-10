@@ -96,11 +96,13 @@ namespace XUnit.Runner.Uap
 
                             //log.AppendLine("Finished running tests");
                             resultsVisitor.Finished.WaitOne();
-                            completionMessages.TryGetValue(Path.GetFileNameWithoutExtension(assembly.AssemblyFilename), out ExecutionSummary summary);
-                            reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, summary);
-                            assembliesElement.Add(assemblyElement);
+                            if (completionMessages.TryGetValue(Path.GetFileNameWithoutExtension(assembly.AssemblyFilename), out ExecutionSummary summary))
+                            {
+                                reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, summary));
+                                assembliesElement.Add(assemblyElement);
 
-                            log.AppendLine($"{Path.GetFileNameWithoutExtension(assembly.AssemblyFilename)}  Total: {summary.Total}, Errors: {summary.Errors}, Failed: {summary.Failed}, Time: {summary.Time}");
+                                log.AppendLine($"{Path.GetFileNameWithoutExtension(assembly.AssemblyFilename)}  Total: {summary.Total}, Errors: {summary.Errors}, Failed: {summary.Failed}, Time: {summary.Time}");
+                            }
                         }
                     }
                 }
