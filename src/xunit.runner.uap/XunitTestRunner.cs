@@ -12,6 +12,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Xunit;
 using Xunit.Shared;
+using Xunit.ConsoleClient;
 
 namespace XUnit.Runner.Uap
 {
@@ -85,21 +86,21 @@ namespace XUnit.Runner.Uap
                             reporterMessageHandler.OnMessage(new TestAssemblyExecutionStarting(assembly, executionOptions));
                             var assemblyElement = new XElement("assembly");
 
-                            IExecutionVisitor resultsVisitor = new XmlAggregateVisitor(reporterMessageHandler, completionMessages, assemblyElement, () => cancel);
-                            if (commandLine.FailSkips)
-                            {
-                                resultsVisitor = new FailSkipVisitor(resultsVisitor);
-                            }
+                            XmlTestExecutionVisitor resultsVisitor = new ShowProgressVisitor(assemblyElement, () => cancel, sbLog, completionMessages);
+                            // if (commandLine.FailSkips)
+                            // {
+                            //     resultsVisitor = new FailSkipVisitor(resultsVisitor);
+                            // }
 
                             xunit.RunTests(filteredTestCases, resultsVisitor, executionOptions);
 
                             //log.AppendLine("Finished running tests");
                             resultsVisitor.Finished.WaitOne();
-
-                            reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, resultsVisitor.ExecutionSummary));
+                            completionMessages.TryGetValue(Path.GetFileNameWithoutExtension(assembly.AssemblyFilename), out ExecutionSummary summary);
+                            reporterMessageHandler.OnMessage(new TestAssemblyExecutionFinished(assembly, executionOptions, summary);
                             assembliesElement.Add(assemblyElement);
 
-                            log.AppendLine($"{Path.GetFileNameWithoutExtension(assembly.AssemblyFilename)}  Total: {resultsVisitor.ExecutionSummary.Total}, Errors: {resultsVisitor.ExecutionSummary.Errors}, Failed: {resultsVisitor.ExecutionSummary.Failed}, Time: {resultsVisitor.ExecutionSummary.Time}");
+                            log.AppendLine($"{Path.GetFileNameWithoutExtension(assembly.AssemblyFilename)}  Total: {summary.Total}, Errors: {summary.Errors}, Failed: {summary.Failed}, Time: {summary.Time}");
                         }
                     }
                 }

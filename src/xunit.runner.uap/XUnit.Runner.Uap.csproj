@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="RunLogger.cs" />
     <Compile Include="XunitTestRunner.cs" />
+    <Compile Include="ShowProgressVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
