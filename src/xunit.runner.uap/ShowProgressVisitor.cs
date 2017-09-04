@@ -57,8 +57,6 @@ namespace Xunit.ConsoleClient
             log.AppendLine($"   {XmlEscape(testFailed.Test.DisplayName)} [FAIL]");
             log.AppendLine($"      {ExceptionUtility.CombineMessages(testFailed).Replace(Environment.NewLine, Environment.NewLine + "      ")}");
 
-            WriteStackTrace(ExceptionUtility.CombineStackTraces(testFailed));
-
             return base.Visit(testFailed);
         }
 
